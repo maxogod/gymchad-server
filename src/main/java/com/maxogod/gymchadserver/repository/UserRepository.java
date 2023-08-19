@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-//@Repository
+@Repository
 public interface UserRepository extends MongoRepository<User, String> {
 
     @Query("{ email: ?0 }")

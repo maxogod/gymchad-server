@@ -18,16 +18,18 @@ public class UserService {
         this.repository = repository;
     }
 
-    public ResponseEntity<User> login(User user) {
-        Optional<User> foundUser = repository.findByEmail(user.getEmail());
-        if (foundUser.isPresent()) {
-            return ResponseEntity.ok(foundUser.get());
-        }
-        return ResponseEntity.status(201).body(this.repository.save(user));
+    public User login(User user) {
+        Optional<User> foundUser = this.repository.findByEmail(user.getEmail());
+        return foundUser.orElse(null);
     }
 
-    public ResponseEntity<List<User>> getSession() {
-        return ResponseEntity.ok(repository.findAll());
+    public User createUser(User user) {
+        if (user.getName().isEmpty() || user.getEmail().isEmpty()) return null;
+        return this.repository.save(user);
+    }
+
+    public List<User> getSession() {
+        return repository.findAll();
     }
 
 }

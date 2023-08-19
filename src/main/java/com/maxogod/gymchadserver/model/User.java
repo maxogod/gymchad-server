@@ -3,6 +3,8 @@ package com.maxogod.gymchadserver.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document("users")
 public class User {
 
@@ -15,15 +17,16 @@ public class User {
 
     private String picture;
 
-    // private List<Activity> activities;
+    private List<Activity> activities;
 
     public User() {
     }
 
-    public User(String name, String email, String picture) {
+    public User(String name, String email, String picture, List<Activity> activities) {
         this.name = name;
         this.email = email;
         this.picture = picture;
+        this.activities = activities;
     }
 
     public String getId() {
@@ -56,5 +59,13 @@ public class User {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public List<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(List<Activity> activities) {
+        this.activities = activities;
     }
 }
