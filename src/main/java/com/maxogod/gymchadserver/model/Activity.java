@@ -1,6 +1,7 @@
 package com.maxogod.gymchadserver.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class Activity {
 
     private String banner;
 
+    @DBRef
     private List<Exercise> exercises;
 
     public Activity() {

@@ -12,4 +12,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query("{ email: ?0 }")
     Optional<User> findByEmail(String email);
+
+    @Query("{ 'activities._id' : ?0 }")
+    Optional<User> findUserByActivityId(String activityId);
 }
