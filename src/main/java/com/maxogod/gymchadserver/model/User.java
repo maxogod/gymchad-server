@@ -1,16 +1,21 @@
 package com.maxogod.gymchadserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Document("users")
-public class User {
+public class User implements Serializable {
 
     @Id
     private String id;
+
+//    @JsonIgnore OLD - I'm now using a dto bc this also ignores any googleId field in the request body
+    private String googleId;
 
     private String name;
 
@@ -24,7 +29,8 @@ public class User {
     public User() {
     }
 
-    public User(String name, String email, String picture, List<Activity> activities) {
+    public User(String googleId ,String name, String email, String picture, List<Activity> activities) {
+        this.googleId = googleId;
         this.name = name;
         this.email = email;
         this.picture = picture;
@@ -37,6 +43,14 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 
     public String getName() {

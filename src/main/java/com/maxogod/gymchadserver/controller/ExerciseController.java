@@ -2,6 +2,7 @@ package com.maxogod.gymchadserver.controller;
 
 import com.maxogod.gymchadserver.model.Activity;
 import com.maxogod.gymchadserver.model.Exercise;
+import com.maxogod.gymchadserver.model.User;
 import com.maxogod.gymchadserver.service.ActivityService;
 import com.maxogod.gymchadserver.service.ExerciseService;
 import jakarta.servlet.http.HttpSession;
@@ -32,22 +33,6 @@ public class ExerciseController {
         Exercise updatedExercise =  this.exerciseService.updateExercise(exerciseId, exercise);
         if (updatedExercise == null) return ResponseEntity.badRequest().body(null);
         return ResponseEntity.ok(updatedExercise);
-    }
-
-    @GetMapping("/athus")
-    public ResponseEntity<Integer> count(HttpSession session) {
-
-        Integer counter = (Integer) session.getAttribute("count");
-
-        if (counter == null) {
-            counter = 1;
-        } else {
-            counter++;
-        }
-
-        session.setAttribute("count", counter);
-
-        return ResponseEntity.ok(counter);
     }
 
 }
