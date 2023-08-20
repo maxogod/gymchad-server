@@ -3,8 +3,10 @@ package com.maxogod.gymchadserver.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
+
 @Document("exercises")
-public class Exercise {
+public class Exercise implements Serializable {
 
     @Id
     private String id;

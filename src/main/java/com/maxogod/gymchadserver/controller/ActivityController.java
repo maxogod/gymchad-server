@@ -54,21 +54,38 @@ public class ActivityController {
     }
 
     @PostMapping("/add-exercise/{activityId}") // TODO - Authenticate
-    public ResponseEntity<Activity> addExercise(@PathVariable String activityId, @RequestBody Exercise exercise) {
-        Activity activity = this.activityService.addExercise(activityId, exercise);
-        if (activity == null) return ResponseEntity.badRequest().body(null);
-        return ResponseEntity.status(HttpStatus.CREATED).body(activity);
+    public ResponseEntity<Activity> addExercise(@PathVariable String activityId, @RequestBody Exercise exercise, HttpSession session) {
+        User user = this.userService.getUserFromSession(session);
+        if (user == null) return ResponseEntity.badRequest().body(null);
+        Activity activity = this.activityService.getActivity(activityId);
+        if (activity == null) return ResponseEntity.notFound().build();
+        if (!this.userService.isActivityOfUser(user, activity)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        Activity updatedActivity = this.activityService.addExercise(activityId, exercise);
+        if (updatedActivity == null) return ResponseEntity.badRequest().body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedActivity);
     }
 
-    @PutMapping("/{activityId}") // TODO - Authenticate
-    public ResponseEntity<Activity> updateActivity(@PathVariable String activityId, @RequestBody Activity activity) {
-        Activity updatedActivity = this.activityService.updateActivity(activityId, activity);
+    @PutMapping("/{activityId}")
+    public ResponseEntity<Activity> updateActivity(@PathVariable String activityId, @RequestBody Activity newActivity, HttpSession session) {
+        User user = this.userService.getUserFromSession(session);
+        if (user == null) return ResponseEntity.badRequest().body(null);
+        Activity activity = this.activityService.getActivity(activityId);
+        if (activity == null) return ResponseEntity.notFound().build();
+        if (!this.userService.isActivityOfUser(user, activity)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+
+        Activity updatedActivity = this.activityService.updateActivity(activityId, newActivity);
         if (updatedActivity == null) return null;
         return ResponseEntity.ok(updatedActivity);
     }
 
-    @DeleteMapping("/{activityId}") // TODO - Authenticate
-    public ResponseEntity<String> deleteActivity(@PathVariable String activityId) {
+    @DeleteMapping("/{activityId}")
+    public ResponseEntity<String> deleteActivity(@PathVariable String activityId, HttpSession session) {
+        User user = this.userService.getUserFromSession(session);
+        if (user == null) return ResponseEntity.badRequest().body(null);
+        Activity activity = this.activityService.getActivity(activityId);
+        if (activity == null) return ResponseEntity.notFound().build();
+        if (!this.userService.isActivityOfUser(user, activity)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+
         this.userService.deleteActivityFromUser(activityId);
         this.activityService.deleteActivity(activityId);
         return ResponseEntity.ok("Activity deleted successfully");

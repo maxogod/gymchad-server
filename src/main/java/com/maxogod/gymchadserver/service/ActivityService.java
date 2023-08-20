@@ -83,4 +83,9 @@ public class ActivityService {
         this.repository.deleteById(activityId);
     }
 
+    public Activity getActivityByExercise(String exerciseId) {
+        Optional<Activity> optionalActivity = this.repository.findActivityByExerciseId(exerciseId);
+        return optionalActivity.orElse(null);
+    }
+
 }
