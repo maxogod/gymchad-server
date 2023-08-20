@@ -2,9 +2,11 @@ package com.maxogod.gymchadserver.controller;
 
 import com.maxogod.gymchadserver.model.Activity;
 import com.maxogod.gymchadserver.model.Exercise;
+import com.maxogod.gymchadserver.model.User;
 import com.maxogod.gymchadserver.service.ActivityService;
 import com.maxogod.gymchadserver.service.ExerciseService;
 import com.maxogod.gymchadserver.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,22 +26,30 @@ public class ActivityController {
         this.userService = userService;
     }
 
-    @PostMapping("/") // TODO - Create activity for a specific user
-    public ResponseEntity<Activity> createActivity(@RequestBody Activity activity) {
+    @PostMapping("/")
+    public ResponseEntity<Activity> createActivity(@RequestBody Activity activity, HttpSession session) {
+        User user = this.userService.getUserFromSession(session);
+        if (user == null) return ResponseEntity.badRequest().body(null);
         Activity newActivity = this.activityService.createActivity(activity);
         if (newActivity == null) return ResponseEntity.badRequest().body(null);
+        this.userService.addActivityToUser(user, newActivity);
         return ResponseEntity.ok(newActivity);
     }
 
-    @GetMapping("/") // TODO - Get activities of a specific user not all
-    public ResponseEntity<List<Activity>> getActivities() {
-        return ResponseEntity.ok(this.activityService.getActivities());
+    @GetMapping("/")
+    public ResponseEntity<List<Activity>> getActivities(HttpSession session) {
+        User user = this.userService.getUserFromSession(session);
+        if (user == null) return ResponseEntity.badRequest().body(null);
+        return ResponseEntity.ok(this.activityService.getActivitiesOfUser(user));
     }
 
-    @GetMapping("/{activityId}") // TODO - Authenticate
-    public ResponseEntity<Activity> getActivity(@PathVariable String activityId) {
+    @GetMapping("/{activityId}")
+    public ResponseEntity<Activity> getActivity(@PathVariable String activityId, HttpSession session) {
+        User user = this.userService.getUserFromSession(session);
+        if (user == null) return ResponseEntity.badRequest().body(null);
         Activity activity = this.activityService.getActivity(activityId);
         if (activity == null) return ResponseEntity.notFound().build();
+        if (!this.userService.isActivityOfUser(user, activity)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         return ResponseEntity.ok(activity);
     }
 

@@ -6,9 +6,12 @@ import com.maxogod.gymchadserver.model.User;
 import com.maxogod.gymchadserver.repository.UserRepository;
 import com.maxogod.gymchadserver.util.ValidationUtils;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +51,7 @@ public class UserService {
         if (existingUser.isPresent()) return null;
 
         user.setGoogleId(this.passwordEncoder.encode(user.getGoogleId()));
+        user.setActivities(new ArrayList<>());
         User newUser = this.repository.save(user);
 
         session.setAttribute("user", newUser);
@@ -62,6 +66,21 @@ public class UserService {
         return new UserDTO(optionalUser.get().getName(), optionalUser.get().getEmail(), optionalUser.get().getPicture(), optionalUser.get().getActivities());
     }
 
+    public User getUserFromSession(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return null;
+        Optional<User> optionalUser = this.repository.findById(user.getId());
+        return optionalUser.orElse(null);
+    }
+
+    public void addActivityToUser(User user, Activity activity) {
+        List<Activity> activities = user.getActivities();
+        if (activities == null) activities = List.of(activity);
+        else activities.add(activity);
+        user.setActivities(activities);
+        this.repository.save(user);
+    }
+
     public void deleteActivityFromUser(String activityId) {
         Optional<User> optionalUser = this.repository.findUserByActivityId(activityId);
         if (optionalUser.isEmpty()) return;
@@ -70,6 +89,11 @@ public class UserService {
         activities.removeIf(activity -> activity.getId().equals(activityId));
         user.setActivities(activities);
         this.repository.save(user);
+    }
+
+    public Boolean isActivityOfUser(User user, Activity activity) {
+        Optional<Activity> optionalActivity = user.getActivities().stream().filter(a -> a.getId().equals(activity.getId())).findFirst();
+        return optionalActivity.isPresent();
     }
 
 }

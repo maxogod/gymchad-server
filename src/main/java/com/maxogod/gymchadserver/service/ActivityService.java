@@ -2,6 +2,7 @@ package com.maxogod.gymchadserver.service;
 
 import com.maxogod.gymchadserver.model.Activity;
 import com.maxogod.gymchadserver.model.Exercise;
+import com.maxogod.gymchadserver.model.User;
 import com.maxogod.gymchadserver.repository.ActivityRepository;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,8 @@ public class ActivityService {
         return this.repository.save(newActivity);
     }
 
-    public List<Activity> getActivities() {
-        return this.repository.findAll();
+    public List<Activity> getActivitiesOfUser(User user) {
+        return user.getActivities();
     }
 
     public Activity getActivity(String activityId) {
