@@ -21,10 +21,15 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@RequestBody User user, HttpSession session) {
         UserDTO foundUser = this.userService.login(user, session);
-        if (foundUser == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (foundUser == null) {
+            UserDTO newUser = this.userService.createUser(user, session);
+            if (newUser == null) return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        };
         return ResponseEntity.ok(foundUser);
     }
 
+    @Deprecated
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@RequestBody User user, HttpSession session) {
         UserDTO newUser = this.userService.createUser(user, session);
