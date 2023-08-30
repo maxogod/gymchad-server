@@ -26,13 +26,13 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(Customizer.withDefaults()) // by default uses a Bean by the name of corsConfigurationSource
+                // .cors(Customizer.withDefaults()) // by default uses a Bean by the name of corsConfigurationSource
                 .csrf(csrf -> csrf.disable()) // TODO - Enable CSRF in production
                 .authorizeHttpRequests(auth-> auth.anyRequest().permitAll())
                 .build();
         // auth.requestMatchers("/api/auth/**").permitAll()
     }
-
+/*
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -43,5 +43,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
+*/
 }
