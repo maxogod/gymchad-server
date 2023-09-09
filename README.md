@@ -1,5 +1,7 @@
 # gymchad-server
 
+[(checkout the frontend)](https://github.com/maxogod/gymchad-app)
+
 ## Endpoints:
 
 ### /api/auth
